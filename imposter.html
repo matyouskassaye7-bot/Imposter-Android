@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Imposter</title>
+<style>
+:root{--bg:#F5F2FF;--surf:#FFFFFF;--surf2:#ECE8FA;--line:rgba(27,27,58,.1);--ink:#1B1B3A;--muted:#66668A;--acc:#FF5C8A;--mint:#2CCFA0;--on:#1B1B3A;--glow:rgba(255,92,138,.16);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12122A;--surf:#1D1D40;--surf2:#2A2A55;--line:rgba(255,255,255,.09);--ink:#F4F1FF;--muted:#A9A9D0;--glow:rgba(124,131,255,.26);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12122A;--surf:#1D1D40;--surf2:#2A2A55;--line:rgba(255,255,255,.09);--ink:#F4F1FF;--muted:#A9A9D0;--glow:rgba(124,131,255,.26);color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:radial-gradient(ellipse at 50% -10%,var(--glow),transparent 62%) no-repeat,var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Ethiopic",Nyala,sans-serif;font-weight:600;font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+#app,.shell{height:100%}
+.shell{max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:10px 14px 6px;min-height:60px}
+.top h2{flex:1;text-align:center;margin:0;font-size:1.1rem;font-weight:800}
+.ib{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surf);color:var(--ink);display:grid;place-items:center;padding:0;flex:none}
+.tx{background:none;border:0;color:var(--acc);font:inherit;font-weight:800;padding:10px 6px;min-width:44px}
+.prog{height:5px;background:var(--surf2);margin:2px 18px 4px;border-radius:5px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--acc);border-radius:5px;transition:width .3s}
+.main{flex:1;overflow-y:auto;padding:6px 18px 20px;-webkit-overflow-scrolling:touch}
+.bar{padding:10px 18px 14px;background:linear-gradient(to top,var(--bg) 75%,transparent)}
+button{font:inherit;color:inherit;cursor:pointer;transition:transform .1s,opacity .2s}
+button:active{transform:scale(.97)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.btn{width:100%;height:56px;border:0;border-radius:18px;font-weight:800;font-size:1.1rem;color:var(--on);background:var(--surf2);display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.pri{background:linear-gradient(135deg,#FF5C8A,#FF9A5C);box-shadow:0 8px 24px rgba(255,92,138,.32)}
+.btn.sec{background:var(--surf);color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;box-shadow:none}
+.btn+.btn,.bar .tx+.btn{margin-top:10px}
+.sub{color:var(--muted);font-weight:500}
+h1{font-weight:900;font-size:2.8rem;line-height:1;margin:14px 0 4px;letter-spacing:-.03em}
+h3{font-size:.9rem;font-weight:700;color:var(--muted);margin:20px 6px 8px}
+.hero{text-align:center;padding:4vh 0 10px}
+.mark{width:104px;height:104px;margin:0 auto;border-radius:30px;background:linear-gradient(135deg,#FF5C8A,#FF9A5C);display:grid;place-items:center;box-shadow:0 14px 34px rgba(255,92,138,.4)}
+.mark svg{width:72px;height:72px}
+.sum{display:inline-block;margin-top:10px;background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.88rem;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.tile{position:relative;background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;text-align:left;color:var(--ink);font-weight:800}
+.tile svg{width:26px;height:26px;color:var(--acc);margin-bottom:6px}
+.tile small{color:var(--muted);font-weight:500;font-size:.82rem}
+.tile .em{font-size:1.7rem;line-height:1;margin-bottom:6px}
+.ct[aria-pressed="true"]{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 14%,var(--surf))}
+.ct .ck{position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:var(--mint);color:#1B1B3A;display:none;place-items:center}
+.ct[aria-pressed="true"] .ck{display:grid}
+.group{background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:2px 16px}
+.item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item.col{flex-direction:column;align-items:stretch;gap:10px}
+.item small{display:block;color:var(--muted);font-weight:500;font-size:.82rem}
+.seg{display:flex;background:var(--surf2);border-radius:14px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:.88rem;padding:9px 4px;border-radius:11px}
+.seg button[aria-pressed="true"]{background:var(--surf);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.tg{width:52px;height:32px;border-radius:16px;border:0;background:var(--surf2);position:relative;flex:none;padding:0}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tg[aria-checked="true"]{background:var(--mint)}
+.tg[aria-checked="true"]::after{transform:translateX(20px)}
+.stp{display:flex;align-items:center;gap:14px}
+.stp b{min-width:2ch;text-align:center;font-size:1.3rem}
+.stp button{width:38px;height:38px;border-radius:50%;border:0;background:var(--surf2);display:grid;place-items:center;padding:0}
+.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#1B1B3A;flex:none}
+.av.big{width:130px;height:130px;font-size:3.4rem;margin:0 auto 18px}
+.nrow{display:flex;gap:12px;align-items:center;padding:8px 0}
+.inp{flex:1;font:inherit;font-weight:600;color:var(--ink);background:var(--surf2);border:1px solid transparent;border-radius:12px;padding:11px 12px;width:100%}
+textarea.inp{min-height:90px;resize:vertical;margin:0}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:22px;padding:18px;margin:14px 0}
+.center{text-align:center}
+.who{font-size:2.6rem;font-weight:900;line-height:1.1;word-break:break-word;margin:6px 0 8px}
+.flip{perspective:1000px;height:min(52vh,360px);margin:12px 0;cursor:pointer}
+.in{position:relative;height:100%;transition:transform .55s;transform-style:preserve-3d}
+.in.on{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:28px;padding:18px;background:var(--surf);border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.front{background:linear-gradient(145deg,#2CCFA0,#2A9DF4);color:#12122A;border:0;font-size:1.2rem;font-weight:800}
+.front .q{width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.35);display:grid;place-items:center;font-size:3.6rem;margin-bottom:12px}
+.back{transform:rotateY(180deg)}
+.imp,.redcard{background:linear-gradient(145deg,#FF3B5C,#B3123A);color:#fff;border:0}
+.redcard{border-radius:28px;padding:30px 16px;text-align:center;margin:14px 0;box-shadow:0 18px 40px rgba(179,18,58,.4)}
+.word{font-size:2.3rem;font-weight:900;line-height:1.1}
+.cat{display:inline-block;background:var(--surf2);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:.9rem;margin:12px 0 0}
+.imp .cat{background:rgba(255,255,255,.22);color:#fff}
+.tip{border-left:4px solid var(--acc);padding-left:12px;margin:10px 0;text-align:left}
+.rule{background:var(--acc);color:var(--on);border-radius:18px;padding:14px 16px;margin:14px 0}
+.wheel{position:relative;width:260px;margin:24px auto 8px}
+.wheel canvas{width:260px;height:260px;display:block;border-radius:50%;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform 4s cubic-bezier(.12,.7,.1,1)}
+.pt{position:absolute;top:-14px;left:50%;margin-left:-13px;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:24px solid var(--ink);z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.ring{display:block;margin:0 auto 10px}
+.how li{margin:14px 0}
+.enter{animation:slide .26s ease-out}
+.pop{animation:pop .5s}
+@keyframes slide{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+#splash{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .45s}
+#splash .mark{animation:pop .6s}
+#splash h1{font-size:2.6rem}
+#splash.out{opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const DATA = {
+  "Everyday": ["Being late|Road","Waiting|Slow","Losing something|Search","Charging a phone|Wall","Cleaning the house|Weekend","Going to work|Morning","Shopping|Money","Washing clothes|Water","Sleeping|Night","Traffic|Noise","Making a phone call|Voice","Taking a bath|Door","Umbrella|Rain","Clock|Hours","Bag|Carry","Key|Lock"],
+  "Food & drink": ["Breakfast|Early","Spicy food|Tears","Hot tea|Steam","Birthday cake|Candles","Street food|Evening","Cooking|Smell","Fruit juice|Cold","Bread|Oven","Eating alone|Quiet","Fasting|Patience","Sweets|Sugar","Lunch break|Noon","Rice|Plate","Egg|Shell","Honey|Bees"],
+  "Places & trips": ["Airport|Bags","Market|Many people","Hospital|White","School|Bell","Bus station|Crowd","Stadium|Cheering","Wedding|Music","Mountain|Cold","Hotel|Bed","Library|Silence","Park|Green","Taxi ride|Window","Bank|Queue","Bridge|River","Farm|Morning","Garage|Tools"],
+  "Feelings": ["Happy|Good day","Angry|Loud","Scared|Dark","Tired|Evening","Surprised|Sudden","Lonely|Quiet","Proud|Result","Shy|Crowd","Excited|Tomorrow","Jealous|Looking","Bored|Long","Sad|Rain"],
+  "Addis life": ["Coffee ceremony|Smoke","Power cut|Evening","Taxi conductor|Voice","Rainy season|Wet","Shiro|Pot","Merkato|Busy","Fasting season|Patience","Eskista dance|Shoulders","Light rail|Line","Sharing injera|Hands","Church bells|Morning","Football at the café|Chairs","Habesha dress|Holiday","Bajaj|Small","Minibus|Full"],
+  "Football": ["Goalkeeper|Gloves","Penalty|Spot","Referee|Whistle","Offside|Line","Corner kick|Flag","Red card|Anger","Stadium|Crowd","Transfer|Money","Derby|Rivals","Free kick|Wall","Captain|Armband","Training|Morning","Fan|Scarf","Substitute|Bench"],
+  "Footballers": ["Messi|Small","Ronaldo|Jump","Neymar|Hair","Mbappé|Speed","Haaland|Giant","Salah|Red","De Bruyne|Passes","Vinicius|Dance","Bellingham|Arms","Kane|Armband","Lewandowski|Poland","Modrić|Midfield","Benzema|Golden ball","Son|Smile","Saka|Young","Rashford|Free kick","Pogba|Dab","Zidane|Headbutt","Ronaldinho|Tricks","Maradona|Hand","Pelé|King","Henry|Cool","Beckham|Curl","Drogba|Strong","Eto'o|Lion","Ibrahimović|Taekwondo","Yamal|Teenager","Pedri|Calm","Rodri|Engine","Van Dijk|Wall","Alisson|Gloves","Courtois|Tall","Neuer|Sweeper","Casillas|Saint","Buffon|Veteran","Maldini|Elegant","Cantona|Collar","Rooney|Boy","Lampard|Late runs","Ramos|Red card","Iniesta|Quiet","Suárez|Bite","Agüero|Last minute","Fernandes|Penalty","Ødegaard|Captain","Palmer|Cold","Foden|Blond","Saladin Said|Ibex","Getaneh Kebede|Goals","Onana|Keeper"],
+  "Animals": ["Lion|Mane","Hyena|Night","Camel|Hump","Monkey|Tree","Chicken|Morning","Donkey|Load","Elephant|Heavy","Cow|Field","Snake|Fear","Bee|Garden","Dog|Loyal","Cat|Soft","Eagle|Sky","Fish|Net"],
+  "Jobs": ["Doctor|White coat","Driver|Road","Teacher|Board","Barber|Mirror","Pilot|Clouds","Farmer|Season","Singer|Stage","Police|Uniform","Cook|Heat","Tailor|Thread","Journalist|Questions","Shopkeeper|Counter"],
+  "Movies & music": ["Comedy|Crowd","Horror|Night","Love song|Radio","Drummer|Stick","Cinema|Dark","Actor|Role","Dancing|Floor","Concert|Tickets","Cartoon|Childhood","Headphones|Ears","Guitar|Strings","Radio|Waves"],
+  "School": ["Exam|Silence","Homework|Night","Uniform|Colour","Classroom|Desks","Break time|Bell","Graduation|Hat","Notebook|Lines","University|Dorm","Group project|Argument","Lecture|Sleepy","Report card|Parents","Pencil|Eraser"],
+  "Technology": ["Phone|Pocket","Charger|Cable","Wi-Fi|Invisible","Laptop|Lap","Password|Secret","Social media|Scroll","Video call|Screen","Camera|Lens","Selfie|Arm","Battery|Percent","Online shopping|Delivery","Download|Waiting"],
+  "Ethiopian food": ["Injera|Round","Kitfo|Butter","Doro wat|Egg","Tibs|Pan","Tej|Honey","Berbere|Red","Buna|Cup","Dabo|Oven","Firfir|Leftover","Gomen|Green","Kolo|Snack","Genfo|Hot"],
+  "Holidays": ["Timket|Water","Meskel|Fire","Genna|Game","New Year|Flowers","Eid|Prayer","Fasika|Meat","Wedding|Dress","Birthday|Surprise","Gift|Paper","Family visit|Table","New clothes|Shop","Holiday dinner|Many"],
+  "Home & clothes": ["Door|Key","Chair|Legs","Window|Glass","Kitchen|Smell","Shoes|Pair","Jacket|Cold","Dress|Party","Scarf|Neck","Blanket|Layers","Mirror|Face","Broom|Dust","Lamp|Switch"],
+  "Nature & weather": ["Rain|Clouds","Sun|Daytime","Wind|Invisible","Thunder|Sound","River|Bridge","Forest|Trees","Lake|Calm","Flower|Garden","Fog|Morning","Fire|Smoke","Cold morning|Breath","Rainbow|After","Sunset|Orange"]
+};
+const ICON = {"Everyday":"🌅","Food & drink":"🍞","Places & trips":"🗺️","Feelings":"😮","Addis life":"☕","Football":"⚽","Footballers":"🏆","Animals":"🦁","Jobs":"💼","Movies & music":"🎬","School":"🎒","Technology":"📱","Ethiopian food":"🍲","Holidays":"🎉","Home & clothes":"👕","Nature & weather":"🌧️","My words":"✏️"};
+const HARD = new Set("Offside,Transfer,Journalist,Tailor,Group project,Online shopping,Social media,Report card,University,Lecture,Password,Download,Berbere,Genfo,Firfir,Dabo,Jealous,Surprised,Graduation,Light rail,Fasting season,Eskista dance,Habesha dress,Bajaj,Derby,Substitute,Captain,Free kick,Corner kick,Selfie,Holiday dinner,Family visit,Cold morning,Rainbow,Sweets,Garage,Bank,Wi-Fi,Wedding,Fasting,Proud,Excited".split(","));
+const RULES = ["Answer with only one word.","Speak in a funny voice.","Say your sentence standing up.","Look at the ceiling when you talk.","No hand movements.","Whisper your answer.","Use only three words.","Speak like a news reader.","Start with the word “Maybe”.","Speak very slowly."];
+const ALL = Object.keys(DATA), WC = ["#3DDBB0","#FF8FB1","#FFC93C","#9AA0FF"];
+let S = {players:5,names:[],imps:1,hint:"easy",timer:3,style:"describe",easy:false,twist:false,rules:false,sound:true,theme:"auto",custom:"",cats:new Set(ALL),used:new Set(),screen:"home"};
+let R = null, TI = null, last = "";
+try{ const o = JSON.parse(localStorage.getItem("imp2")||"null"); if(o){ Object.assign(S,o); S.cats=new Set((o.cats||ALL).filter(c=>DATA[c])); S.used=new Set(o.used||[]); S.screen="home"; } }catch(e){}
+function save(){ try{ localStorage.setItem("imp2", JSON.stringify({...S, cats:[...S.cats], used:[...S.used], screen:undefined})); }catch(e){} }
+function theme(){ const r=document.documentElement; S.theme==="auto" ? r.removeAttribute("data-theme") : r.setAttribute("data-theme",S.theme); }
+
+const IC = {
+ back:'<path d="M15 5l-7 7 7 7"/>', close:'<path d="M6 6l12 12M18 6L6 18"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c3 0 4.5 2 4.5 5"/>',
+ grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',
+ sliders:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/>',
+ help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 115 .8c0 1.7-2.5 2-2.5 3.7M12 17.5v.1"/>',
+ play:'<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>', plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>', check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>'
+};
+const ic = (n,s=24) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+const logo = () => `<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="70" r="34" fill="#fff"/><path d="M20 54h80l-11-6-10-22H41L31 48z" fill="#1B1B3A"/><rect x="29" y="50" width="62" height="8" rx="4" fill="#FF5C8A"/><circle cx="48" cy="72" r="6" fill="#1B1B3A"/><circle cx="72" cy="72" r="6" fill="#1B1B3A"/><path d="M47 88q13 9 26 0" fill="none" stroke="#1B1B3A" stroke-width="4.5" stroke-linecap="round"/></svg>`;
+
+const $ = s => document.querySelector(s);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nm = i => (S.names[i]||"").trim() || "Player "+(i+1);
+const ini = i => (S.names[i]||"").trim() ? [...(S.names[i].trim())][0].toUpperCase() : String(i+1);
+const fmt = s => Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const rnd = n => Math.floor(Math.random()*n);
+const vib = p => { try{ S.sound && navigator.vibrate && navigator.vibrate(p); }catch(e){} };
+function stopT(){ if(TI){ clearInterval(TI); TI=null; } }
+function keepAwake(){ try{ navigator.wakeLock && navigator.wakeLock.request("screen").catch(()=>{}); }catch(e){} }
+document.addEventListener("visibilitychange", () => { if(!document.hidden && R) keepAwake(); });
+function beep(){
+  if(S.sound){ try{ const c=new (window.AudioContext||window.webkitAudioContext)();
+    [0,.3,.6].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.2;o.start(c.currentTime+d);o.stop(c.currentTime+d+.2);}); }catch(e){} }
+  vib([300,150,300,150,300]);
+}
+function go(s){ stopT(); S.screen = s; try{ history.pushState({s},""); }catch(e){} render(); }
+window.addEventListener("popstate", () => { if(S.screen!=="home"){ stopT(); S.screen = S.screen==="result" ? "play" : "home"; render(); } });
+
+function pool(){
+  const all = [];
+  S.cats.forEach(c => DATA[c].forEach(s => { const [w,h] = s.split("|"); if(!(S.easy && HARD.has(w))) all.push({w,h,c}); }));
+  S.custom.split("\n").map(x=>x.trim()).filter(Boolean).forEach(w => all.push({w, h:"starts with “"+w[0].toUpperCase()+"”", c:"My words"}));
+  return all;
+}
+function pick(){
+  let avail = pool().filter(x => !S.used.has(x.w));
+  if(!avail.length){ pool().forEach(x => S.used.delete(x.w)); avail = pool(); }
+  const x = avail[rnd(avail.length)]; S.used.add(x.w); return x;
+}
+const remaining = () => pool().filter(x => !S.used.has(x.w)).length;
+const maxImps = () => Math.max(1, Math.floor((S.players-1)/3));
+function startRound(){
+  if(!pool().length){ go("cats"); return; }
+  const x = pick(); let alt = null;
+  if(S.twist){ const same = pool().filter(p => p.c===x.c && p.w!==x.w); if(same.length) alt = same[rnd(same.length)]; }
+  const idx = [...Array(S.players).keys()].sort(() => Math.random()-.5);
+  R = {word:x.w, hint:x.h, cat:x.c, alt, imps:new Set(idx.slice(0,S.imps)), i:0, starter:-1, rot:0, rule:S.rules?RULES[rnd(RULES.length)]:""};
+  keepAwake(); go("pass");
+}
+function drawWheel(){
+  const c = $("#wh"); if(!c) return;
+  const x = c.getContext("2d"), n = S.players, s = 2*Math.PI/n, r = 280;
+  x.clearRect(0,0,560,560);
+  for(let i=0;i<n;i++){
+    x.beginPath(); x.moveTo(r,r); x.arc(r,r,r,-Math.PI/2+i*s,-Math.PI/2+(i+1)*s); x.closePath();
+    x.fillStyle = WC[(i===n-1 && i%WC.length===0) ? 2 : i%WC.length]; x.fill();
+    x.strokeStyle="#fff"; x.lineWidth=5; x.stroke();
+    x.save(); x.translate(r,r); x.rotate(-Math.PI/2+(i+.5)*s);
+    x.fillStyle="#1B1B3A"; x.font="800 34px system-ui,sans-serif"; x.textAlign="right"; x.fillText(nm(i).slice(0,10), r-30, 12); x.restore();
+  }
+  x.beginPath(); x.arc(r,r,34,0,7); x.fillStyle="#fff"; x.fill();
+}
+function face(){
+  const imp = R.imps.has(R.i);
+  if(imp && !R.alt){
+    const hint = S.hint==="easy" ? `${ICON[R.cat]||""} ${esc(R.cat)}` : S.hint==="tricky" ? `Hint: ${esc(R.hint)}` : "";
+    return {cls:"imp", html:`<div class="word">You are the imposter</div><p style="margin:12px 0 0;font-weight:500">Listen and guess the secret.</p>${hint?`<span class="cat">${hint}</span>`:""}`};
+  }
+  return {cls:"", html:`<span class="cat" style="margin:0 0 14px">${ICON[R.cat]||""} ${esc(R.cat)}</span><div class="word">${esc(imp?R.alt.w:R.word)}</div>`};
+}
+const seg = (k, cur, opts) => `<div class="seg">${opts.map(([v,l])=>`<button data-set="${k}=${v}" aria-pressed="${String(cur)===String(v)}">${l}</button>`).join("")}</div>`;
+const tg = (k, title, desc) => `<div class="item"><span>${title}${desc?`<small>${desc}</small>`:""}</span><button class="tg" role="switch" data-tg="${k}" aria-checked="${S[k]}" aria-label="${title}"></button></div>`;
+const stp = (m, p, v) => `<span class="stp"><button data-a="${m}" aria-label="Less">${ic("minus",18)}</button><b>${v}</b><button data-a="${p}" aria-label="More">${ic("plus",18)}</button></span>`;
+const hb = l => l==="back" ? `<button class="ib" data-a="home" aria-label="Back">${ic("back")}</button>` : l==="close" ? `<button class="ib" data-a="home" aria-label="Close">${ic("close")}</button>` : `<span class="ib" style="visibility:hidden"></span>`;
+const tile = (a, i, t, s) => `<button class="tile" data-a="${a}">${ic(i)}<span>${t}</span><small>${s}</small></button>`;
+
+function render(){
+  save(); theme();
+  const sc = S.screen; let t="", l="", rt="", body="", bar="", prog=-1, top=true;
+  if(sc==="home"){
+    top = false;
+    body = `<div class="hero"><div class="mark">${logo()}</div><h1>Imposter</h1><p class="sub" style="margin:0">Who’s faking it?</p>
+      <div class="sum">${S.players} players · ${S.imps} imposter${S.imps>1?"s":""} · ${S.timer?S.timer+" min":"no timer"}</div></div>
+      <div class="tiles">${tile("players","users","Players",S.players+" playing")}${tile("cats","grid","Categories",S.cats.size+" of "+ALL.length+" on")}${tile("settings","sliders","Settings","Hints, timer, twist")}${tile("how","help","How to play","Quick guide")}</div>`;
+    bar = `<button class="btn pri" data-a="go">${ic("play",22)} Play</button>`;
+  } else if(sc==="players"){
+    t="Players"; l="back";
+    body = `<div class="group"><div class="item"><span>Players</span>${stp("pm","pp",S.players)}</div><div class="item"><span>Imposters<small>Up to ${maxImps()} for ${S.players} players</small></span>${stp("im","ip",S.imps)}</div></div>
+      <h3>Names</h3><div class="group" style="padding:6px 16px">${Array.from({length:S.players},(_,i)=>`<div class="nrow"><div class="av" style="background:${WC[i%4]}">${esc(ini(i))}</div><input class="inp" type="text" data-n="${i}" maxlength="14" placeholder="Player ${i+1}" value="${esc(S.names[i]||"")}" aria-label="Name of player ${i+1}"></div>`).join("")}</div>`;
+  } else if(sc==="cats"){
+    t="Categories"; l="back"; rt=`<button class="tx" data-a="catall">All / none</button>`;
+    body = `<p class="sub" style="margin:4px 6px 12px">${remaining()} secrets left before any repeat</p>
+      <div class="tiles" style="margin-top:0">${ALL.map(c=>`<button class="tile ct" data-c="${esc(c)}" aria-pressed="${S.cats.has(c)}"><span class="ck">${ic("check",14)}</span><span class="em">${ICON[c]}</span><span>${esc(c)}</span><small>${DATA[c].length} secrets</small></button>`).join("")}</div>
+      <h3>${ICON["My words"]} Your own words</h3><div class="group" style="padding:14px"><textarea class="inp" data-cu aria-label="Your own words" placeholder="One word per line">${esc(S.custom)}</textarea><p class="sub" style="margin:8px 0 0;font-size:.85rem">These always join the game.</p></div>`;
+  } else if(sc==="settings"){
+    t="Settings"; l="back";
+    body = `<h3>Play style</h3><div class="group">
+      <div class="item col"><span>How to talk</span>${seg("style",S.style,[["describe","Describe it"],["ask","Ask questions"]])}</div>
+      <div class="item col"><span>Hint for the imposter${S.twist?"<small>Not used while Twist is on</small>":""}</span>${seg("hint",S.hint,[["easy","Category"],["tricky","One word"],["none","None"]])}</div>
+      <div class="item col"><span>Talk timer</span>${seg("timer",S.timer,[[0,"Off"],[2,"2 min"],[3,"3 min"],[5,"5 min"]])}</div>
+      <div class="item col"><span>Words</span>${seg("easy",S.easy?1:0,[[0,"All words"],[1,"Easy only"]])}</div></div>
+      <h3>Extras</h3><div class="group">${tg("twist","Twist","Imposter gets a different secret and may not know")}${tg("rules","Random rule each round")}${tg("sound","Sound and vibration")}</div>
+      <h3>Look</h3><div class="group"><div class="item col"><span>Theme</span>${seg("theme",S.theme,[["auto","Auto"],["light","Light"],["dark","Dark"]])}</div></div>`;
+  } else if(sc==="how"){
+    t="How to play"; l="back";
+    body = `<div class="panel"><ol class="how" style="margin:0;padding-left:20px">
+      <li>Pass the phone. Each person flips the card in secret.</li><li>Everyone sees the same secret. The imposter does not.</li>
+      <li>Spin the wheel to see who goes first.</li><li>Talk about the secret, one short sentence each. Do not say it. Or ask each other questions.</li>
+      <li>Vote for the imposter.</li><li>If you catch the imposter, they get one last guess of the secret.</li></ol></div>`;
+  } else if(sc==="pass"){
+    t=`Player ${R.i+1} of ${S.players}`; l="close"; prog=R.i/S.players*100;
+    body = `<div class="center" style="padding-top:8vh"><div class="av big" style="background:${WC[R.i%4]}">${esc(ini(R.i))}</div><p class="sub" style="margin:0">Pass the phone to</p><div class="who">${esc(nm(R.i))}</div><p class="sub">Make sure no one else is looking.</p></div>`;
+    bar = `${R.i===0?`<div class="center"><button class="tx" data-a="skip">Skip this secret</button></div>`:""}<button class="btn pri" data-a="show">I’m ${esc(nm(R.i))}. Show me</button>`;
+  } else if(sc==="reveal"){
+    const f = face(), lastP = R.i===S.players-1;
+    t=`Player ${R.i+1} of ${S.players}`; l="close"; prog=(R.i+.5)/S.players*100;
+    body = `<div class="flip" role="button" tabindex="0" aria-label="Tap to flip the card"><div class="in" id="fl"><div class="face front"><div class="q">?</div>Tap to reveal</div><div class="face back ${f.cls}">${f.html}</div></div></div><p class="center sub" style="margin:0">Tap the card again to hide it.</p>`;
+    bar = `<button class="btn pri" id="nx" data-a="hide" disabled>${lastP?"Got it. Start playing":"Got it. Hide and pass"}</button>`;
+  } else if(sc==="play"){
+    t="Talk time"; l="close";
+    const tips = S.style==="ask" ? `<div class="tip">Take turns. Ask the next person one question about the secret.</div><div class="tip">Imposter: answer like you know it.</div>` : `<div class="tip">Each person says one short sentence about the secret. Do not say the secret.</div><div class="tip">Imposter: say something that fits.</div>`;
+    body = `<div class="panel center"><h3 style="margin:0">Who goes first?</h3><div class="wheel"><div class="pt"></div><canvas id="wh" width="560" height="560"></canvas></div>
+      <div class="who" id="wn" style="font-size:1.6rem;margin:12px 0">${R.starter>=0?esc(nm(R.starter))+" goes first!":"Spin to find out"}</div><button class="btn sec" data-a="spin" id="sp" style="height:48px">Spin the wheel</button></div>
+      <div class="panel" style="padding:8px 18px">${tips}<div class="tip">Then everyone votes for the imposter.</div></div>
+      ${R.rule?`<div class="rule"><b>Rule this round:</b> ${esc(R.rule)}</div>`:""}
+      ${S.timer?`<div class="panel center"><svg class="ring" viewBox="0 0 120 120" width="150" height="150"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--surf2)" stroke-width="9"/><circle id="rg" cx="60" cy="60" r="52" fill="none" stroke="#2CCFA0" stroke-width="9" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="0" transform="rotate(-90 60 60)"/><text id="tm" x="60" y="69" text-anchor="middle" font-size="28" font-weight="800" fill="var(--ink)">${fmt(S.timer*60)}</text></svg><button class="btn sec" data-a="tstart" id="tb" style="height:48px">Start timer</button></div>`:""}`;
+    bar = `<button class="btn pri" data-a="reveal">Reveal the imposter</button>`;
+  } else if(sc==="result"){
+    t="Result"; l="close";
+    const list = [...R.imps].sort((x,y)=>x-y).map(nm).map(esc).join(" and ");
+    body = `<p class="center sub" style="margin:14px 0 0">${R.imps.size>1?"The imposters were":"The imposter was"}</p><div class="redcard pop"><div class="word">${list}</div></div>
+      <div class="panel center"><p class="sub" style="margin:0 0 4px">The secret was</p><div class="word">${esc(R.word)}</div>${R.alt?`<p class="sub" style="margin:12px 0 0">The imposter had: <b style="color:var(--ink)">${esc(R.alt.w)}</b></p>`:""}</div>
+      <p class="center sub">If the group caught the imposter, they get one last guess of the secret.</p>`;
+    bar = `<button class="btn pri" data-a="again">Next round</button><button class="btn sec" data-a="home" style="height:48px">Back to menu</button>`;
+  }
+  const old = $(".main"), st = (old && sc===last) ? old.scrollTop : 0;
+  $("#app").innerHTML = `<div class="shell">${top?`<header class="top">${hb(l)}<h2>${t}</h2>${rt||hb("")}</header>`:""}${prog>=0?`<div class="prog"><i style="width:${prog}%"></i></div>`:""}<main class="main ${sc!==last?"enter":""}">${body}</main>${bar?`<footer class="bar">${bar}</footer>`:""}</div>`;
+  $(".main").scrollTop = st; last = sc;
+  if(sc==="play"){ drawWheel(); if(R.rot) $("#wh").style.transform = `rotate(${R.rot}deg)`; }
+}
+
+document.addEventListener("input", e => {
+  const d = e.target.dataset;
+  if(d.n!==undefined) S.names[+d.n] = e.target.value;
+  if(d.cu!==undefined) S.custom = e.target.value;
+  save();
+});
+document.addEventListener("click", e => {
+  if(e.target.closest(".flip")){ $("#fl").classList.toggle("on"); $("#nx").disabled = false; vib(15); return; }
+  const b = e.target.closest("button"); if(!b) return;
+  const d = b.dataset, a = d.a;
+  if(a!=="tstart") stopT();
+  if(d.set){ const [k,v] = d.set.split("="); S[k] = k==="timer" ? +v : k==="easy" ? v==="1" : v; render(); return; }
+  if(d.tg){ S[d.tg] = !S[d.tg]; render(); return; }
+  if(d.c){ S.cats.has(d.c) ? S.cats.delete(d.c) : S.cats.add(d.c); render(); return; }
+  if(["home","players","cats","settings","how"].includes(a)){ go(a); return; }
+  if(a==="pm"){ S.players = Math.max(3, S.players-1); S.imps = Math.min(S.imps, maxImps()); }
+  else if(a==="pp"){ S.players = Math.min(12, S.players+1); }
+  else if(a==="im"){ S.imps = Math.max(1, S.imps-1); }
+  else if(a==="ip"){ S.imps = Math.min(maxImps(), S.imps+1); }
+  else if(a==="catall"){ S.cats = S.cats.size===ALL.length ? new Set() : new Set(ALL); }
+  else if(a==="go" || a==="again" || a==="skip"){ startRound(); return; }
+  else if(a==="show"){ go("reveal"); return; }
+  else if(a==="hide"){ if(R.i < S.players-1){ R.i++; go("pass"); } else go("play"); return; }
+  else if(a==="reveal"){ vib(30); go("result"); return; }
+  else if(a==="spin"){
+    const n = S.players, w = rnd(n), sg = 360/n, target = (360-(w+.5)*sg)%360, cur = R.rot%360;
+    R.rot += 1800 + ((target-cur)+360)%360; R.starter = w;
+    $("#wh").style.transform = `rotate(${R.rot}deg)`; b.disabled = true; $("#wn").textContent = "Spinning…";
+    setTimeout(() => { const n2 = $("#wn"); if(n2 && S.screen==="play"){ n2.textContent = nm(w)+" goes first!"; $("#sp").disabled = false; $("#sp").textContent = "Spin again"; vib(40); } }, 4100);
+    return;
+  }
+  else if(a==="tstart"){
+    stopT(); R.left = S.timer*60; const tot = R.left; $("#tb").textContent = "Restart timer";
+    const upd = () => { $("#tm").textContent = fmt(R.left); const g = $("#rg"); g.setAttribute("stroke-dashoffset", String(327*(1-R.left/tot))); g.setAttribute("stroke", R.left<=10 ? "#FF5C8A" : "#2CCFA0"); };
+    upd();
+    TI = setInterval(() => { R.left--; upd(); if(R.left<=0){ stopT(); $("#tm").textContent = "Done!"; beep(); } }, 1000);
+    return;
+  }
+  render();
+});
+render();
+const sp = document.createElement("div"); sp.id = "splash"; sp.innerHTML = `<div class="mark">${logo()}</div><h1>Imposter</h1>`; document.body.appendChild(sp);
+setTimeout(() => sp.classList.add("out"), 1000); setTimeout(() => sp.remove(), 1500);
+</script>
+</body>
+</html>
